@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { sql } from '@/lib/db';
+import { dbConfigured, sql } from '@/lib/db';
 import { APP_NAME, formatBytes } from '@/lib/constants';
 import { appOrigin, TOKEN_RE } from '@/lib/util';
 import { PortalReplyForm } from '@/components/PublicForms';
@@ -19,7 +19,7 @@ const STATUS_TEXT: Record<string, string> = {
 export default async function PortalPage({ params, searchParams }: { params: Promise<{ token: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { token } = await params;
   const sp = await searchParams;
-  if (!TOKEN_RE.test(token)) notFound();
+  if (!dbConfigured || !TOKEN_RE.test(token)) notFound();
   const [t] = await sql<{ id: string; number: string; subject: string; customer_name: string; status: string; created_at: Date }[]>`
     select id, number, subject, customer_name, status, created_at from tickets where portal_token = ${token}`;
   if (!t) notFound();

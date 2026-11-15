@@ -5,11 +5,11 @@
 //
 import postgres from 'postgres';
 import { scrypt, randomBytes } from 'node:crypto';
-import { loadEnv, sslOption } from './env.mjs';
+import { databaseUrl, loadEnv, sslOption } from './env.mjs';
 
 loadEnv();
 const [username, name, password] = process.argv.slice(2);
-if (!process.env.DATABASE_URL) {
+if (!databaseUrl()) {
   console.error('DATABASE_URL is not set.');
   process.exit(1);
 }
@@ -34,7 +34,7 @@ const key = await new Promise((res, rej) =>
 );
 const hash = ['scrypt', 16384, 8, 1, salt.toString('base64'), key.toString('base64')].join('$');
 
-const sql = postgres(process.env.DATABASE_URL, { ssl: sslOption(), max: 1, onnotice: () => {} });
+const sql = postgres(databaseUrl(), { ssl: sslOption(), max: 1, onnotice: () => {} });
 try {
   const [row] = await sql`
     insert into users (name, username, password_hash, role, must_change_password)

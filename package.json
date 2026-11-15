@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/migrate.mjs && next build",
+    "build": "node scripts/migrate.mjs --optional && next build",
     "start": "next start",
     "db:migrate": "node scripts/migrate.mjs",
     "create-admin": "node scripts/create-admin.mjs",

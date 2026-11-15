@@ -197,3 +197,6 @@ tr.warn td { background: #fff8f0; }
   .back { display: inline-flex; }
   .two, .three { grid-template-columns: 1fr; }
 }
+
+.steps { padding-left: 20px; line-height: 1.6; }
+.steps li { margin-bottom: 8px; }

@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { Suspense, type ReactNode } from 'react';
 import { requireUser } from '@/lib/auth';
-import { sql } from '@/lib/db';
+import { dbConfigured, sql } from '@/lib/db';
+import DbMissing from '@/components/DbMissing';
 import { APP_NAME } from '@/lib/constants';
 import { logout } from '@/lib/actions/auth';
 import SideNav from '@/components/SideNav';
@@ -10,6 +11,7 @@ import Avatar from '@/components/Avatar';
 export const dynamic = 'force-dynamic';
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
+  if (!dbConfigured) return <DbMissing />;
   const u = await requireUser();
   const [c] = await sql<Record<string, number>[]>`
     select

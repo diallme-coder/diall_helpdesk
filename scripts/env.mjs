@@ -14,6 +14,10 @@ export function loadEnv() {
   }
 }
 
+export function databaseUrl() {
+  return process.env.DATABASE_URL || process.env.POSTGRES_URL || '';
+}
+
 export function sslOption() {
   return process.env.DATABASE_SSL === 'false' ? false : 'require';
 }

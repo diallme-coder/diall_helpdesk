@@ -1,12 +1,14 @@
 import { redirect } from 'next/navigation';
 import { getUser } from '@/lib/auth';
-import { sql } from '@/lib/db';
+import { dbConfigured, sql } from '@/lib/db';
+import DbMissing from '@/components/DbMissing';
 import { APP_NAME } from '@/lib/constants';
 import { LoginForm } from '@/components/AuthForms';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LoginPage() {
+  if (!dbConfigured) return <DbMissing />;
   if (await getUser()) redirect('/inbox');
   const [{ n }] = await sql<{ n: number }[]>`select count(*)::int as n from users`;
   if (n === 0) redirect('/setup');

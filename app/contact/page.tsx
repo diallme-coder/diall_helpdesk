@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
 import { APP_NAME } from '@/lib/constants';
 import { ContactForm } from '@/components/PublicForms';
+import { dbConfigured } from '@/lib/db';
+import DbMissing from '@/components/DbMissing';
 
 export const metadata: Metadata = { title: `Contact support · ${APP_NAME}` };
 
 export default async function ContactPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  if (!dbConfigured) return <DbMissing />;
   const sp = await searchParams;
   return (
     <div className="authwrap">

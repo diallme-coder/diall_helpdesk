@@ -1,11 +1,13 @@
 import { redirect } from 'next/navigation';
-import { sql } from '@/lib/db';
+import { dbConfigured, sql } from '@/lib/db';
+import DbMissing from '@/components/DbMissing';
 import { APP_NAME } from '@/lib/constants';
 import { SetupForm } from '@/components/AuthForms';
 
 export const dynamic = 'force-dynamic';
 
 export default async function SetupPage() {
+  if (!dbConfigured) return <DbMissing />;
   const [{ n }] = await sql<{ n: number }[]>`select count(*)::int as n from users`;
   if (n > 0) redirect('/login');
   const enabled = (process.env.SETUP_TOKEN ?? '').length >= 12;

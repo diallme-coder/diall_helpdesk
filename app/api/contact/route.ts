@@ -1,4 +1,5 @@
 import { createTicket } from '@/lib/tickets';
+import { dbConfigured } from '@/lib/db';
 import { allow } from '@/lib/ratelimit';
 import { filesFrom, filesProblem } from '@/lib/files';
 import { EMAIL_RE, field, ipFromRequest, sameOrigin } from '@/lib/util';
@@ -8,6 +9,7 @@ export const runtime = 'nodejs';
 const fail = (error: string, status = 400) => Response.json({ ok: false, error }, { status });
 
 export async function POST(req: Request) {
+  if (!dbConfigured) return fail('The helpdesk isn’t set up yet. Please try again later.', 503);
   if (!sameOrigin(req)) return fail('This form must be sent from the contact page.', 403);
   const ip = ipFromRequest(req) ?? 'unknown';
   if (!(await allow(`contact:${ip}`, 5, 10 * 60))) return fail('Too many requests. Please wait a few minutes and try again.', 429);
